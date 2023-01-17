@@ -20,7 +20,6 @@ class EquipoController extends Controller
     public function create()
     {
         // codigo de create equipo
-
     }
 
      

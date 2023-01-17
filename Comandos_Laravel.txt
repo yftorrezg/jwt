@@ -1,0 +1,66 @@
+Pasos para crear un proyecto en laravel 
+
+Paso 1 : ejecutar el siguiente comando 
+composer create-project laravel/laravel nombre_del_proyecto
+
+Paso 2 : creamos nuestra base de datos en mysql
+
+paso 3 : cambiamos el nombre de la base de datos en el archivo ".env" por el nombre 
+	    de nuestra base de datos 
+
+Comando para migrar datos :
+php artisan migrate
+php artisan migrate:fresh --seed
+
+Comando para jwt :
+composer require tymon/jwt-auth:dev-develop --prefer-source
+
+Luego en app.php en Providers copiar esto :
+Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
+
+Crear el archivo jwt.php :
+php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServiceProvider"
+
+Generar la llave secreta :
+php artisan jwt:secret
+
+En models user.php copiar :
+use Tymon\JWTAuth\Contracts\JWTSubject;
+
+Implementar : 
+implements JWTSubject
+
+Despues de protected casts copiar estas funciones :
+public function getJWTIdentifier(){
+        return $this-> getKey();
+    }
+
+    public function getJWTCustomClaims(){
+        return [];
+    }
+
+Crear un controlador para la autenticacion : 
+php artisan make:controller Auth/AuthController
+
+Crear un Request para el Login :
+php artisan make:request Auth/LoginRequest
+
+Para ver la lista de las rutas :
+php artisan route:list
+
+Crear controlador para el User :
+php artisan make:controller UserController --model=User --api
+
+Crear Middleware :
+php artisan make:middleware JwtMiddleware
+
+Luego ir al kernel.php y copiar :
+'jwt.verify' => JwtMiddleware::class
+
+En api.php implementar :
+Route::middleware('jwt.verify')->group(function(){
+    Route::get('users', [UserController::class, 'index']);
+});
+
+paso 4 : creamos el modelo,el factory,las migrations,los seeders  y los controladores 
+php artisan make:model Nombre_del_modelo -mcrfs
